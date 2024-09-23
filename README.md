@@ -4,7 +4,9 @@
 
 > This is a small project for managing credits. Users can view, create, and add payments to their credits.
 ![Screenshot from 2024-09-23 09-16-38](https://github.com/user-attachments/assets/38c1e1c1-04ad-4176-900e-ab5087b4fa68)
-> ![Screenshot from 2024-09-23 21-01-35](https://github.com/user-attachments/assets/e5fc145e-a7ee-4432-b3d4-bbe20cf41cbc)
+>
+![Screenshot from 2024-09-23 21-02-57](https://github.com/user-attachments/assets/eab3ebae-cab9-4743-bc36-6f91353fa783)
+
 
 
 
