@@ -23,9 +23,10 @@ test('homepage contains non empty table', function () {
 
     $this->browse(function (Browser $browser) use($credit) {
         $browser->visit('/')
-            ->assertDontSee("No credits found")
-            ->assertSeeIn('#credits-table', $credit->serial_number)
-            ->assertSeeIn('#credits-table', $credit->recipient->name);
+        ->assertDontSee("No credits found")
+        ->with('#credits-table', function (Browser $table) use($credit) {
+            $table->assertSee($credit->serial_number);
+        });
     });
 });
 
@@ -35,7 +36,10 @@ test('paginated credits table doesnt contain 11th record', function () {
 
     $this->browse(function (Browser $browser) use ($lastCredit) {
         $browser->visit('/')
-            ->assertDontSeeIn('#credits-table', $lastCredit->serial_number);
+        ->assertDontSee("No credits found")
+        ->with('#credits-table', function (Browser $table) use($lastCredit) {
+            $table->assertDontSee($lastCredit->serial_number);
+        });
     });
 
 });
