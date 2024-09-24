@@ -6,7 +6,6 @@ uses(
 )->in('Browser');
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class)->in('Feature');
 /*
 |--------------------------------------------------------------------------
 | Test Case
@@ -19,12 +18,12 @@ uses(RefreshDatabase::class)->in('Feature');
 */
 
 pest()->extend(Tests\TestCase::class)
- // ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
+    ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
     ->in('Feature');
 
 
 pest()->extend(Tests\TestCase::class)
-// ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
+   ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
    ->in('Unit');
 /*
 |--------------------------------------------------------------------------
