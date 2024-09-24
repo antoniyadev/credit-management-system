@@ -11,8 +11,8 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::get('credits/for-payment', [CreditController::class, 'fetchAllForPayment'])->name('credits.for-payment');
-Route::apiResource('credits', CreditController::class)->only('store', 'index', 'show');;
+Route::apiResource('credits', CreditController::class)->only('store', 'index', 'show');
 
 Route::post('payments', [PaymentController::class, 'store'])->name('payments.store');
 
-Route::get('recipients', [RecipientController::class, 'index']);
+Route::apiResource('recipients', RecipientController::class)->only('store', 'index', 'show');

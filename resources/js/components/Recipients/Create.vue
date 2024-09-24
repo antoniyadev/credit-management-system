@@ -1,44 +1,41 @@
 <template>
-    <form @submit.prevent="storePayment(payment.credit_id, payment.amount)">
-        <!-- Credit -->
+    <form @submit.prevent="storeRecipient(recipient)">
+        <!-- Name -->
         <div class="mt-4">
-            <label for="credit" class="block text-sm font-medium text-gray-700">
-                Credit
-            </label>
-            <select
-                id="credit"
-                v-model="payment.credit_id"
-                class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            <label
+                for="recipient-name"
+                class="block text-sm font-medium text-gray-700"
             >
-                <option value="" selected>-- Choose credit --</option>
-                <option v-for="credit in creditsForPayment" :value="credit.id">
-                    {{ credit.serial_number }}
-                </option>
-            </select>
-
+                Name
+            </label>
+            <input
+                id="recipient-name"
+                v-model="recipient.name"
+                type="text"
+                class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            />
             <div class="mt-1 text-red-600">
-                <div v-for="message in validationErrors?.credit_id">
+                <div v-for="message in validationErrors?.name">
                     {{ message }}
                 </div>
             </div>
         </div>
-
-        <!-- Amount -->
+        <!-- Email -->
         <div class="mt-4">
             <label
-                for="payment-amount"
+                for="recipient-email"
                 class="block text-sm font-medium text-gray-700"
             >
-                Amount
+                Email
             </label>
             <input
-                id="payment-amount"
-                v-model="payment.amount"
-                type="number"
+                id="recipient-email"
+                v-model="recipient.email"
+                type="email"
                 class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
             />
             <div class="mt-1 text-red-600">
-                <div v-for="message in validationErrors?.amount">
+                <div v-for="message in validationErrors?.email">
                     {{ message }}
                 </div>
             </div>
@@ -63,30 +60,12 @@
 
 <script setup>
 import { onMounted, reactive } from "vue";
-import { useRoute } from "vue-router";
-import useCredits from "@/composables/credits";
+import useRecipients from "@/composables/recipients";
 
-const payment = reactive({
-    credit_id: "",
-    amount: "",
+const recipient = reactive({
+    name: "",
+    email: "",
 });
 
-const {
-    credit,
-    getCredit,
-    creditsForPayment,
-    getCreditsForPayment,
-    storePayment,
-    isLoading,
-    validationErrors,
-} = useCredits();
-
-const route = useRoute();
-
-onMounted(() => {
-    getCreditsForPayment();
-    if (route.params.credit_id) {
-        payment.credit_id = route.params.credit_id;
-    }
-});
+const { storeRecipient, isLoading, validationErrors } = useRecipients();
 </script>

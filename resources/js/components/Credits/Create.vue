@@ -18,10 +18,20 @@
                     {{ recipient.name }}
                 </option>
             </select>
+
             <div class="mt-1 text-red-600">
                 <div v-for="message in validationErrors?.recipient_id">
                     {{ message }}
                 </div>
+            </div>
+
+            <div class="mt-3">
+                <router-link
+                    :to="{ name: 'recipients.create' }"
+                    class="p-2 mt-4 font-bold text-white bg-green-500 rounded hover:bg-green-700"
+                >
+                    Add new recipient
+                </router-link>
             </div>
         </div>
 
@@ -88,6 +98,7 @@
 import { onMounted, reactive } from "vue";
 import useRecipients from "@/composables/recipients";
 import useCredits from "@/composables/credits";
+import { useRoute } from "vue-router";
 
 const credit = reactive({
     recipient_id: "",
@@ -95,10 +106,15 @@ const credit = reactive({
     term_in_months: "",
 });
 
-const { recipients, getRecipients } = useRecipients();
+const { recipient, getRecipient, recipients, getRecipients, storeRecipients } =
+    useRecipients();
 const { storeCredit, validationErrors, isLoading } = useCredits();
+const route = useRoute();
 
 onMounted(() => {
     getRecipients();
+    if (route.query.recipient_id) {
+        credit.recipient_id = route.query.recipient_id;
+    }
 });
 </script>
