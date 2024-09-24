@@ -7,6 +7,7 @@ use App\Http\Requests\StorePaymentRequest;
 use App\Http\Resources\PaymentResource;
 use App\Models\Credit;
 use App\Models\Payment;
+use App\Services\CreditService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
@@ -19,21 +20,15 @@ class PaymentController extends Controller
         if(!$credit) {
             throw new ModelNotFoundException('Credit not found');
         }
-
-        // Check if the payment amount exceeds the remaining balance:
-        $isAmountExceeded = false;
-        $remainingBalance = $credit->remaining_balance;
-        $amount = $data['amount'];
+        $remainingBalance = $credit->remainingBalance;
+        $isAmountExceeded = (new CreditService())->isAmountExceeded($remainingBalance, $data['amount']);
 
         // If payment amount exceeds the remaining balance, adjust the payment amount to the remaining balance.
-        if($amount > $remainingBalance) {
-            $amount = $remainingBalance;
-            $isAmountExceeded = true;
-        }
-        // If no, proceed with the full payment.
+        $amount = $isAmountExceeded ? $remainingBalance : $data['amount'];
+
         $payment = Payment::create([
             'credit_id' => $data['credit_id'],
-            'amount' => $amount
+            'amount' => $amount,
         ]);
 
         return new PaymentResource($payment, $isAmountExceeded);

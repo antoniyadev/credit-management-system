@@ -3,10 +3,13 @@
 namespace App\Services;
 
 use App\Models\Credit;
+use App\Models\Recipient;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class CreditService
 {
     const INTEREST_RATE = 7.9;
+    const MAX_CREDIT_SUM = 80000;
 
     public function generateSerialNumber(Credit $credit): string
     {
@@ -33,5 +36,28 @@ class CreditService
         $monthlyInstallment = $amount / 100 * ($r * pow((1 + $r), $termInMonths)) / (pow((1 + $r), $termInMonths) - 1);
 
         return round($monthlyInstallment, 2);
+    }
+
+    public function isCreditLimitReached($recipientId, $value): bool
+    {
+        $recipient = Recipient::find($recipientId);
+
+        $sumAmountOfRecipientCredits = $recipient->credits()->sum('amount')/100;
+
+        if(!$recipient) {
+            throw new ModelNotFoundException("Recipient not found");
+        }
+
+        if($sumAmountOfRecipientCredits + $value > self::MAX_CREDIT_SUM) {
+            return true;
+        }
+        return false;
+    }
+
+    public function isAmountExceeded($remainingBalance, $amount): bool
+    {
+        // Check if the payment amount exceeds the remaining balance:
+        return $amount > $remainingBalance ? true : false;
+
     }
 }

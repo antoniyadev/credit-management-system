@@ -43,3 +43,19 @@ test('paginated credits table doesnt contain 11th record', function () {
     });
 
 });
+
+test('if payment amount exceeded the remaining balance notify the user', function () {
+    $credit = Credit::create([
+        'amount'  => '10000',
+        'recipient_id' => Recipient::factory()->create()->id,
+        'term_in_months' => 12,
+    ]);
+
+    $this->browse(function (Browser $browser) use($credit) {
+        $browser->visit('/')
+        ->with('#credits-table', function (Browser $table) use($credit) {
+            $table->click('@add-payment' . $credit->id)
+            ->waitForText('Payment amount exceeds the remaining balance');
+        });
+    });
+});

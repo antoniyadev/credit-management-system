@@ -175,7 +175,7 @@
                         </td>
                         <td class="w-40" v-show="credit.remaining_balance > 0">
                             <router-link
-                                class="p-2 m-2 font-bold text-white bg-green-500 rounded hover:bg-green-700"
+                                class="add-payment-{{credit_id}} p-2 m-2 font-bold text-white bg-green-500 rounded hover:bg-green-700"
                                 :to="{
                                     name: 'payments.create',
                                     params: { credit_id: credit.id },
