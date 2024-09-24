@@ -23,6 +23,7 @@ class Credit extends Model
         'serial_number',
         'amount',
         'term_in_months',
+        'created_at',
     ];
 
     public function monthlyInstallment(): Attribute

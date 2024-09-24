@@ -33,7 +33,10 @@ test('created credit contains correct serial number', function () {
     ]);
 
     (new CreditService())->generateSerialNumber($credit1);
-    expect((new CreditService())->generateSerialNumber($credit1))->toBe($credit1->created_at->format('Y-m') . '-0000001');
-    // expect($credit2->serial_number)->toBe($credit2->created_at->format('Y-m') . '-0000002');
-    // expect($credit3->serial_number)->toBe($credit3->created_at->format('Y-m') . '-0000001');
+    expect((new CreditService())->generateSerialNumber($credit1))
+        ->toBe($credit1->created_at->format('Y-m') . '-0000001');
+    expect((new CreditService())->generateSerialNumber($credit2))
+        ->toBe($credit2->created_at->format('Y-m') . '-0000002');
+    expect((new CreditService())->generateSerialNumber($credit3))
+        ->toBe($credit3->created_at->format('Y-m') . '-0000001');
 });
