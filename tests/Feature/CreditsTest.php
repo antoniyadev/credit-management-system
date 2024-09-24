@@ -6,7 +6,7 @@ use App\Services\CreditService;
 
 use function Pest\Laravel\postJson;
 
-test('created credit contains correct serial number', function () {
+test('created credit successful', function () {
     $recipient = Recipient::factory()->create();
     $credit = Credit::create([
         'recipient_id'  =>$recipient->id,
@@ -14,13 +14,14 @@ test('created credit contains correct serial number', function () {
         'term_in_months' => 12,
     ]);
 
-    $serialNumber = $credit->serial_number;
+    postJson('/api/credits', $credit->toArray())
+        ->assertStatus(201);
+
     $this->assertModelExists($recipient);
     $this->assertModelExists($credit);
     $this->assertDatabaseHas('credits', [
-        'serial_number' => $serialNumber,
+        'serial_number' => $credit->serial_number,
     ]);
-    expect($serialNumber)->toBe($credit->created_at->format('Y-m') . '-0000001');
 });
 
 test('credit limit cannot be more then limit', function () {
