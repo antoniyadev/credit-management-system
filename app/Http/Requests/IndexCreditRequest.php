@@ -2,10 +2,10 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Recipient;
+use App\Rules\CreditLimit;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreRecipientRequest extends FormRequest
+class IndexCreditRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,8 +23,8 @@ class StoreRecipientRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email:rfc,dns', 'max:255', 'unique:'.Recipient::class],
+            'order_direction' => ['string', 'in:asc,desc'],
+            'order_column' => ['string', 'in:id,recipient_name,created_at'],
         ];
     }
 }

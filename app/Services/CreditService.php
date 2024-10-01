@@ -4,27 +4,34 @@ namespace App\Services;
 
 use App\Models\Credit;
 use App\Models\Recipient;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Exception;
+use Illuminate\Support\Facades\Log;
 
 class CreditService
 {
     const INTEREST_RATE = 7.9;
     const MAX_CREDIT_SUM = 80000;
 
-    public function generateSerialNumber(Credit $credit): string
+    public function generateSerialNumber(Credit $credit)
     {
-        if($credit->serial_number) {
+        try {
+            if ($credit->serial_number) {
+                return $credit->serial_number;
+            }
+            $credit->serial_series = $credit->created_at->format('Y-m');
+
+            $credit->number = (Credit::where('serial_series', $credit->serial_series)->max('number') ?? 0) + 1;
+
+            $credit->serial_number = $credit->serial_series . '-' . str_pad($credit->number, 7, '0', STR_PAD_LEFT);
+
+            $credit->save();
+
+            Log::info('Credit serial number generated: ' . $credit->serial_number);
+
             return $credit->serial_number;
+        } catch (Exception $e) {
+            Log::error($e);
         }
-        $credit->serial_series = $credit->created_at->format('Y-m');
-
-        $credit->number = (Credit::where('serial_series', $credit->serial_series)->max('number') ?? 0) + 1;
-
-        $credit->serial_number = $credit->serial_series . '-' .str_pad($credit->number, 7, '0', STR_PAD_LEFT);
-
-        $credit->save();
-
-        return $credit->serial_number;
     }
 
     public function calculateMonthlyInstallment($amount, $termInMonths): float
@@ -40,24 +47,23 @@ class CreditService
 
     public function isCreditLimitReached($recipientId, $value): bool
     {
-        $recipient = Recipient::find($recipientId);
+        try {
+            $recipient = Recipient::findOrFail($recipientId);
 
-        $sumAmountOfRecipientCredits = $recipient->credits()->sum('amount')/100;
+            $sumAmountOfRecipientCredits = $recipient->credits()->sum('amount') / 100;
 
-        if(!$recipient) {
-            throw new ModelNotFoundException("Recipient not found");
+            if ($sumAmountOfRecipientCredits + $value > self::MAX_CREDIT_SUM) {
+                return true;
+            }
+            return false;
+        } catch (Exception $e) {
+            Log::error($e);
         }
-
-        if($sumAmountOfRecipientCredits + $value > self::MAX_CREDIT_SUM) {
-            return true;
-        }
-        return false;
     }
 
     public function isAmountExceeded($remainingBalance, $amount): bool
     {
         // Check if the payment amount exceeds the remaining balance:
         return $amount > $remainingBalance ? true : false;
-
     }
 }
